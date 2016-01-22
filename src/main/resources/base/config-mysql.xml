@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.1.xsd   
+        http://www.springframework.org/schema/beans   
+        http://www.springframework.org/schema/beans/spring-beans-4.1.xsd   
+        http://www.springframework.org/schema/context   
+        http://www.springframework.org/schema/context/spring-context-4.1.xsd   
+        http://www.springframework.org/schema/mvc   
+        http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd   
+        http://www.springframework.org/schema/tx   
+        http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task-4.1.xsd">
+
+
+  <!-- 开启注解事务，实现自动配置 -->
+  <!--<tx:annotation-driven/>-->
+  <!-- 定时器开启 -->
+  <!--<task:annotation-driven mode="proxy"/>-->
+  <!-- 开启aop -->
+  <!--<aop:aspectj-autoproxy/>-->
+
+  <!-- GoodsCenter 数据源配置 -->
+  <bean id="goodsCenterDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+      destroy-method="close">
+    <!-- 数据源驱动类可不写，Druid默认会自动根据URL识别DriverClass -->
+    <property name="driverClassName" value="${jdbc.mysql.driver}"/>
+    <!-- 基本属性 url、user、password -->
+    <property name="url" value="${goodscenter.jdbc.mysql.url}"/>
+    <property name="username" value="${goodscenter.mysql.username}"/>
+    <property name="password" value="${goodscenter.mysql.password}"/>
+    <!-- 配置初始化大小、最小、最大 -->
+    <property name="initialSize" value="3"/>
+    <property name="minIdle" value="3"/>
+    <property name="maxActive" value="20"/>
+    <!-- 配置获取连接等待超时的时间 -->
+    <property name="maxWait" value="60000"/>
+    <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+    <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+    <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+    <property name="minEvictableIdleTimeMillis" value="30000"/>
+    <property name="validationQuery" value="SELECT 'x'"/>
+    <property name="testWhileIdle" value="true"/>
+    <property name="testOnBorrow" value="true"/>
+    <property name="testOnReturn" value="false"/>
+    <!-- 配置监控统计拦截的filters -->
+    <property name="filters" value="stat"/>
+  </bean>
+
+  <!-- define the SqlSessionFactory -->
+  <bean id="sqlSessionFactoryGoodsCenter" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="goodsCenterDataSource"/>
+    <property name="typeAliasesPackage" value="com.wepiao.goods.model.goods"/>
+    <property name="mapperLocations" value="classpath*:mapper/goods/*.xml"/>
+  </bean>
+  <!-- scan for mappers and let them be autowired -->
+  <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <property name="basePackage" value="com.wepiao.goods.mapper.goods"/>
+    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryGoodsCenter"/>
+  </bean>  
+  <!-- transaction manager, use JtaTransactionManager for global tx -->
+  <bean id="transactionManagerGoodsCenter"
+      class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="goodsCenterDataSource"/>
+  </bean>
+  <!-- enable transaction demarcation with annotations -->
+  <tx:annotation-driven transaction-manager="transactionManagerGoodsCenter"/>
+
+  <!-- OpenSystem 数据源配置 -->
+  <bean id="openSystemDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+      destroy-method="close">
+    <!-- 数据源驱动类可不写，Druid默认会自动根据URL识别DriverClass -->
+    <property name="driverClassName" value="${jdbc.mysql.driver}"/>
+    <!-- 基本属性 url、user、password -->
+    <property name="url" value="${opensystem.jdbc.mysql.url}"/>
+    <property name="username" value="${opensystem.mysql.username}"/>
+    <property name="password" value="${opensystem.mysql.password}"/>
+    <!-- 配置初始化大小、最小、最大 -->
+    <property name="initialSize" value="3"/>
+    <property name="minIdle" value="3"/>
+    <property name="maxActive" value="20"/>
+    <!-- 配置获取连接等待超时的时间 -->
+    <property name="maxWait" value="60000"/>
+    <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+    <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+    <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+    <property name="minEvictableIdleTimeMillis" value="30000"/>
+    <property name="validationQuery" value="SELECT 'x'"/>
+    <property name="testWhileIdle" value="true"/>
+    <property name="testOnBorrow" value="true"/>
+    <property name="testOnReturn" value="false"/>
+    <!-- 配置监控统计拦截的filters -->
+    <property name="filters" value="stat"/>
+  </bean>
+
+  <!-- scan for mappers and let them be autowired -->
+  <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <property name="basePackage" value="com.wepiao.goods.mapper.open"/>
+    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryOpenSystem"/>
+  </bean>
+
+  <!-- define the SqlSessionFactory -->
+  <bean id="sqlSessionFactoryOpenSystem" class="org.mybatis.spring.SqlSessionFactoryBean"
+      name="sqlSessionFactoryOpenSystem">
+    <property name="dataSource" ref="openSystemDataSource"/>
+    <property name="typeAliasesPackage" value="com.wepiao.goods.model.open"/>
+    <property name="mapperLocations" value="classpath*:mapper/open/*.xml"/>
+  </bean>
+
+  <!--<bean id="exampleInitBean" class="com.wepiao.products.stock.task.CacheInitBean">-->
+  <!--</bean>-->
+  <!--事务管理器配置 -->
+  <bean id="transactionManager"
+      class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="openSystemDataSource"/>
+  </bean>
+  <!-- enable transaction demarcation with annotations -->
+  <tx:annotation-driven transaction-manager="transactionManager"/>
+
+  <!-- http client -->
+  <bean id="pollingConnectionManager"
+      class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager">
+    <property name="maxTotal" value="200"/>
+    <property name="defaultMaxPerRoute" value="100"/>
+  </bean>
+
+  <bean id="httpClientBuilder" class="org.apache.http.impl.client.HttpClientBuilder"
+      factory-method="create">
+    <property name="connectionManager" ref="pollingConnectionManager"/>
+  </bean>
+
+  <bean id="httpClient" factory-bean="httpClientBuilder"
+      factory-method="build"/>
+
+  <bean id="httpClientRequestFactory"
+      class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
+    <constructor-arg ref="httpClient"/>
+    <property name="connectTimeout" value="30000"/>
+    <property name="readTimeout" value="30000"/>
+  </bean>
+
+  <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+    <property name="requestFactory" ref="httpClientRequestFactory"/>
+  </bean>
+
+</beans>
