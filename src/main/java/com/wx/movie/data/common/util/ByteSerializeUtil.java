@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.wepiao.pricing.redis;
+package com.wx.movie.data.common.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

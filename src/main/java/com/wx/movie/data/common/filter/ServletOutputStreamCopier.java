@@ -1,4 +1,4 @@
-package com.wepiao.goods.common.filter;
+package com.wx.movie.data.common.filter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

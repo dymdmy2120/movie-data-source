@@ -1,4 +1,4 @@
-package com.wepiao.order.followup.mq;
+package com.wx.movie.data.mq;
 
 import javax.annotation.PostConstruct;
 
