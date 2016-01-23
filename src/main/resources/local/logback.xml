@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds">
 	<!-- 日志存放的路径  -->
-	<property name="LOG_HOME" value="${catalina.home}/logs" />
+	<property name="LOG_HOME" value="${catalina.home}/dym/logs" />
     <!-- 控制台输出日志 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -17,7 +17,7 @@
             <OnMatch>ACCEPT</OnMatch>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/ordercenter/order_debug.%d{yyyyMMdd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/movie-data-source/moviedata_debug.%d{yyyyMMdd}.log</fileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}:%line - %msg%n</pattern>
@@ -30,7 +30,7 @@
             <level>INFO</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/ordercenter/order_info.%d{yyyyMMdd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/movie-data-source/moviedata_info.%d{yyyyMMdd}.log</fileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}:%line - %msg%n</pattern>
@@ -43,32 +43,19 @@
             <level>WARN</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-           	<fileNamePattern>${LOG_HOME}/ordercenter/order_error.%d{yyyyMMdd}.log</fileNamePattern>
+           	<fileNamePattern>${LOG_HOME}/movie-data-source/moviedata_error.%d{yyyyMMdd}.log</fileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}:%line - %msg%n</pattern>
         </encoder>
     </appender>    
-   	<!-- analysis -->
+   	<!-- analysis，用户在HttpLogFilter 中 -->
     <appender name="analysis" class="ch.qos.logback.core.rolling.RollingFileAppender">
     	<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/ordercenter/order_analysis.%d{yyyyMMdd}.log</fileNamePattern>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <!-- bis -->
-    <appender name="bis" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>INFO</level>
-        </filter>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/ordercenter/order_bis.%d{yyyyMMdd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/movie-data-source/moviedata_analysis.%d{yyyyMMdd}.log</fileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -76,7 +63,7 @@
     </appender>
     
     <!-- action -->
-    <appender name="action" class="ch.qos.logback.core.rolling.RollingFileAppender">
+<!--     <appender name="action" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
         </filter>
@@ -86,10 +73,10 @@
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
-    </appender>
+    </appender> -->
     
     <!-- outgoing http request -->
-    <appender name="outgoing" class="ch.qos.logback.core.rolling.RollingFileAppender">
+   <!--  <appender name="outgoing" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
         </filter>
@@ -99,26 +86,25 @@
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
-    </appender>
-
-	<logger name="com.wepiao" level="DEBUG" />
-	<logger name="com.wxmovie" level="DEBUG" />
+    </appender> -->
+<!-- 将com.wx.movie包下的类记录的日志交给上一级root来处理 没有指定level继承root级别，
+     root会根据不同类的日志级别输入到对应的appender 终端
+     additivity=false 默认为true就在自动义logger输入到指定的终端后，还要向上一级root输出，这样同一个级别日志记录两次
+     为false就是不向上一级输出
+ -->
+	<logger name="com.wx.movie" level="DEBUG" />
  	
  	<logger name="analysis" additivity="false">
  		<appender-ref ref="analysis" />
  	</logger>
-
-	<logger name="bis" additivity="true">
-        <appender-ref ref="bis" />
-    </logger>
 	
-	<logger name="action" additivity="false">
+	<!-- <logger name="action" additivity="false">
 		<appender-ref ref="action" />
 	</logger>
 	
 	<logger name="outgoing" additivity="false">
 		<appender-ref ref="outgoing" />
-	</logger>
+	</logger> -->
 
     <root level="INFO">
 	    <appender-ref ref="STDOUT" />

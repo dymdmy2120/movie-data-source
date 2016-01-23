@@ -10,7 +10,7 @@
     <property name="testOnBorrow" value="true"/>
   </bean>
 
-  <bean id="redisUtilsNew" class="com.wepiao.common.redis.RedisUtils">
+  <bean id="redisUtilsNew" class="com.wx.movie.data.redis.RedisUtils">
     <constructor-arg index="0" value="${redis.hosts}"/>
     <constructor-arg index="1" ref="jedisPoolConfig"/>
   </bean>

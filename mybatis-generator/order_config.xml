@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration >
+ 
+  <classPathEntry  location="mysql-connector-java-5.1.33.jar"/> 
+  <context id="movie-data-source">
+  <commentGenerator>
+   <property name="suppressDate" value="true"/>  
+
+  <property name="suppressAllComments" value="false"/>  
+  </commentGenerator>
+      
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/order" userId="root" password="root">
+    </jdbcConnection>
+    <javaTypeResolver> 
+    <property name="forceBigDecimals" value="false"/> 
+ </javaTypeResolver>
+ 
+    <javaModelGenerator targetPackage="com.wx.movie.data.dao.entity.order" targetProject="../src/main/java" >
+     <property name="enableSubPackages" value="true"/> 
+      <property name="trimStrings" value="true"/>  
+      </javaModelGenerator>
+    	<sqlMapGenerator targetPackage="base.mapper.order"
+			targetProject="../src/main/resources">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+     	<javaClientGenerator type="XMLMAPPER"
+			targetPackage="com.wx.movie.data.dao.mapper.order" targetProject="../src/main/java">
+			<property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+    <table schema="MovieDetail" tableName="movie_detail" enableCountByExample="false" enableUpdateByExample="false"	enableDeleteByExample="false" enableSelectByExample="false"	selectByExampleQueryId="false">
+    </table>
+    
+     <table schema="OrderInfo" tableName="order_info" enableCountByExample="false" enableUpdateByExample="false"	enableDeleteByExample="false" enableSelectByExample="false"	selectByExampleQueryId="false">
+    </table>
+  </context>
+</generatorConfiguration>

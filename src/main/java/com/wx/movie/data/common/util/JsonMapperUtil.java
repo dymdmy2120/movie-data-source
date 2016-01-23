@@ -29,24 +29,24 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
  *
  * @author calvin
  */
-public class JsonMapper {
+public class JsonMapperUtil {
 
-  private static Logger logger = LoggerFactory.getLogger(JsonMapper.class);
+  private static Logger logger = LoggerFactory.getLogger(JsonMapperUtil.class);
 
   private ObjectMapper mapper;
 
-  private static JsonMapper jsonMapper = new JsonMapper();
+  private static JsonMapperUtil jsonMapper = new JsonMapperUtil();
 
-  private static JsonMapper nonEmptyMapper = new JsonMapper(Include.NON_EMPTY);
+  private static JsonMapperUtil nonEmptyMapper = new JsonMapperUtil(Include.NON_EMPTY);
 
-  private static JsonMapper nonDefaultMapper = new JsonMapper(Include.NON_DEFAULT);
+  private static JsonMapperUtil nonDefaultMapper = new JsonMapperUtil(Include.NON_DEFAULT);
 
 
-  public JsonMapper() {
+  public JsonMapperUtil() {
     this(null);
   }
 
-  public JsonMapper(Include include) {
+  public JsonMapperUtil(Include include) {
     mapper = new ObjectMapper();
     // 设置输出时包含属性的风格
     if (include != null) {
@@ -56,21 +56,21 @@ public class JsonMapper {
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
   }
 
-  public static JsonMapper getInstance() {
+  public static JsonMapperUtil getInstance() {
     return jsonMapper;
   }
 
   /**
    * 创建只输出非Null且非Empty(如List.isEmpty)的属性到Json字符串的Mapper,建议在外部接口中使用.
    */
-  public static JsonMapper nonEmptyMapper() {
+  public static JsonMapperUtil nonEmptyMapper() {
     return nonEmptyMapper;
   }
 
   /**
    * 创建只输出初始值被改变的属性到Json字符串的Mapper, 最节约的存储方式，建议在内部接口中使用。
    */
-  public static JsonMapper nonDefaultMapper() {
+  public static JsonMapperUtil nonDefaultMapper() {
     return nonDefaultMapper;
   }
 

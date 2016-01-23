@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.wx.movie.data.common.util.JsonMapper;
+import com.wx.movie.data.common.util.JsonMapperUtil;
 
 @Component
 public class DataExceptionResolver implements HandlerExceptionResolver {
@@ -38,7 +38,7 @@ public class DataExceptionResolver implements HandlerExceptionResolver {
     try {
       httpServletResponse.setContentType("application/json");
       httpServletResponse.setCharacterEncoding("UTF-8");
-      httpServletResponse.getWriter().print(new JsonMapper().toJson(response));
+      httpServletResponse.getWriter().print(new JsonMapperUtil().toJson(response));
     } catch (IOException e1) {
       logger.error("DataExceptionResolver write error", e1);
     }

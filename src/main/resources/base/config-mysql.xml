@@ -27,19 +27,19 @@
   <!-- 开启aop -->
   <!--<aop:aspectj-autoproxy/>-->
 
-  <!-- GoodsCenter 数据源配置 -->
-  <bean id="goodsCenterDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+  <!-- UserData 数据源配置 -->
+  <bean id="userDataSource" class="com.alibaba.druid.pool.DruidDataSource"
       destroy-method="close">
     <!-- 数据源驱动类可不写，Druid默认会自动根据URL识别DriverClass -->
     <property name="driverClassName" value="${jdbc.mysql.driver}"/>
     <!-- 基本属性 url、user、password -->
-    <property name="url" value="${goodscenter.jdbc.mysql.url}"/>
-    <property name="username" value="${goodscenter.mysql.username}"/>
-    <property name="password" value="${goodscenter.mysql.password}"/>
+    <property name="url" value="${userdata.jdbc.mysql.url}"/>
+    <property name="username" value="${userdata.mysql.username}"/>
+    <property name="password" value="${userdata.mysql.password}"/>
     <!-- 配置初始化大小、最小、最大 -->
-    <property name="initialSize" value="3"/>
-    <property name="minIdle" value="3"/>
-    <property name="maxActive" value="20"/>
+    <property name="initialSize" value="${userdata.initialSize}"/>
+    <property name="minIdle" value="${userdata.minIdle}"/>
+    <property name="maxActive" value="${userdata.maxActive}"/>
     <!-- 配置获取连接等待超时的时间 -->
     <property name="maxWait" value="60000"/>
     <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
@@ -55,37 +55,38 @@
   </bean>
 
   <!-- define the SqlSessionFactory -->
-  <bean id="sqlSessionFactoryGoodsCenter" class="org.mybatis.spring.SqlSessionFactoryBean">
-    <property name="dataSource" ref="goodsCenterDataSource"/>
-    <property name="typeAliasesPackage" value="com.wepiao.goods.model.goods"/>
-    <property name="mapperLocations" value="classpath*:mapper/goods/*.xml"/>
+  <bean id="sqlSessionFactoryUserData" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="userDataSource"/>
+    <property name="typeAliasesPackage" value="com.wx.movie.data.dao.entity.user"/>
+    <property name="mapperLocations" value="classpath*:mapper/user/*.xml"/>
   </bean>
   <!-- scan for mappers and let them be autowired -->
   <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-    <property name="basePackage" value="com.wepiao.goods.mapper.goods"/>
-    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryGoodsCenter"/>
+    <property name="basePackage" value="com.wx.movie.data.dao.mapper.user"/>
+    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryUserData"/>
   </bean>  
   <!-- transaction manager, use JtaTransactionManager for global tx -->
-  <bean id="transactionManagerGoodsCenter"
+  <bean id="transactionManagerUserData"
       class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-    <property name="dataSource" ref="goodsCenterDataSource"/>
+    <property name="dataSource" ref="userDataSource"/>
   </bean>
   <!-- enable transaction demarcation with annotations -->
-  <tx:annotation-driven transaction-manager="transactionManagerGoodsCenter"/>
+  <tx:annotation-driven transaction-manager="transactionManagerUserData"/>
 
-  <!-- OpenSystem 数据源配置 -->
-  <bean id="openSystemDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+  <!-- Order 数据源配置 -->
+  <bean id="orderDataSource" class="com.alibaba.druid.pool.DruidDataSource"
       destroy-method="close">
     <!-- 数据源驱动类可不写，Druid默认会自动根据URL识别DriverClass -->
     <property name="driverClassName" value="${jdbc.mysql.driver}"/>
     <!-- 基本属性 url、user、password -->
-    <property name="url" value="${opensystem.jdbc.mysql.url}"/>
-    <property name="username" value="${opensystem.mysql.username}"/>
-    <property name="password" value="${opensystem.mysql.password}"/>
+    <property name="url" value="${order.jdbc.mysql.url}"/>
+    <property name="username" value="${order.mysql.username}"/>
+    <property name="password" value="${order.mysql.password}"/>
     <!-- 配置初始化大小、最小、最大 -->
-    <property name="initialSize" value="3"/>
-    <property name="minIdle" value="3"/>
-    <property name="maxActive" value="20"/>
+      <!-- 配置初始化大小、最小、最大 -->
+    <property name="initialSize" value="${order.initialSize}"/>
+    <property name="minIdle" value="${order.minIdle}"/>
+    <property name="maxActive" value="${order.maxActive}"/>
     <!-- 配置获取连接等待超时的时间 -->
     <property name="maxWait" value="60000"/>
     <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
@@ -100,18 +101,18 @@
     <property name="filters" value="stat"/>
   </bean>
 
+  <!-- define the SqlSessionFactory -->
+  <bean id="sqlSessionFactoryOrder" class="org.mybatis.spring.SqlSessionFactoryBean"
+      name="sqlSessionFactoryOrder">
+    <property name="dataSource" ref="orderDataSource"/>
+    <property name="typeAliasesPackage" value="com.wx.movie.data.dao.entity.order"/>
+    <property name="mapperLocations" value="classpath*:mapper/order/*.xml"/>
+  </bean>
+  
   <!-- scan for mappers and let them be autowired -->
   <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-    <property name="basePackage" value="com.wepiao.goods.mapper.open"/>
-    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryOpenSystem"/>
-  </bean>
-
-  <!-- define the SqlSessionFactory -->
-  <bean id="sqlSessionFactoryOpenSystem" class="org.mybatis.spring.SqlSessionFactoryBean"
-      name="sqlSessionFactoryOpenSystem">
-    <property name="dataSource" ref="openSystemDataSource"/>
-    <property name="typeAliasesPackage" value="com.wepiao.goods.model.open"/>
-    <property name="mapperLocations" value="classpath*:mapper/open/*.xml"/>
+    <property name="basePackage" value="com.wx.movie.data.dao.mapper.order"/>
+    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryOrder"/>
   </bean>
 
   <!--<bean id="exampleInitBean" class="com.wepiao.products.stock.task.CacheInitBean">-->
@@ -119,7 +120,7 @@
   <!--事务管理器配置 -->
   <bean id="transactionManager"
       class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-    <property name="dataSource" ref="openSystemDataSource"/>
+    <property name="dataSource" ref="orderDataSource"/>
   </bean>
   <!-- enable transaction demarcation with annotations -->
   <tx:annotation-driven transaction-manager="transactionManager"/>

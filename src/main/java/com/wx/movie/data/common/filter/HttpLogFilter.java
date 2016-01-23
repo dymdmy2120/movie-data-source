@@ -1,4 +1,4 @@
-package com.wepiao.goods.common.filter;
+package com.wx.movie.data.common.filter;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wepiao.common.utils.JsonMapper;
+import com.wx.movie.data.common.util.JsonMapperUtil;
 
 @WebFilter("/*")
 public class HttpLogFilter implements Filter {
@@ -49,7 +49,7 @@ public class HttpLogFilter implements Filter {
     HttpServletRequest httpRequest = (HttpServletRequest) request;
     String url = httpRequest.getRequestURL().toString();
     Map<String, String> parameterMap = getParamterMap(httpRequest);
-    log.info("Recv request, method:{}, url:{}, param:{}", httpRequest.getMethod(), url, JsonMapper
+    log.info("Recv request, method:{}, url:{}, param:{}", httpRequest.getMethod(), url, JsonMapperUtil
         .getInstance().toJson(parameterMap));
 
     HttpServletResponseCopier responseCopier =
@@ -139,7 +139,7 @@ public class HttpLogFilter implements Filter {
     rMap.put("url_rule", url);
     rMap.put("log", logMap);
 
-    analysisLog.info(JsonMapper.getInstance().toJson(rMap));
+    analysisLog.info(JsonMapperUtil.getInstance().toJson(rMap));
   }
 
   @SuppressWarnings("rawtypes")

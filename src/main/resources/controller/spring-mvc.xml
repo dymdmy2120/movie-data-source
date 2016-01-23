@@ -12,7 +12,13 @@
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
 	</context:component-scan>
+	<!-- 扫描controller注解 -->
+<!--   <context:annotation-config/> -->
 
+  <mvc:view-resolvers>
+    <mvc:jsp prefix="/WEB-INF/jsp/" suffix=".jsp"/>
+  </mvc:view-resolvers>
+  
     <mvc:annotation-driven>
         <mvc:message-converters>
 			<bean class="org.springframework.http.converter.StringHttpMessageConverter">

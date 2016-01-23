@@ -2,7 +2,7 @@ package com.wx.movie.data.common.exception;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.wx.movie.data.common.util.JsonMapper;
+import com.wx.movie.data.common.util.JsonMapperUtil;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommonResponse<T> {
@@ -48,7 +48,7 @@ public class CommonResponse<T> {
 
   @Override
   public String toString() {
-    return JsonMapper.getInstance().toJson(this);
+    return JsonMapperUtil.getInstance().toJson(this);
   }
 
   public String getMsg() {

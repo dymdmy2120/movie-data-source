@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration >
+ 
+  <classPathEntry  location="mysql-connector-java-5.1.33.jar"/> 
+  <context id="movie-data-source">
+  <commentGenerator>
+   <property name="suppressDate" value="true"/>  
+
+  <property name="suppressAllComments" value="false"/>  
+  </commentGenerator>
+      
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/userdata" userId="root" password="root">
+    </jdbcConnection>
+    <javaTypeResolver> 
+    <property name="forceBigDecimals" value="false"/> 
+ </javaTypeResolver>
+ 
+    <javaModelGenerator targetPackage="com.wx.movie.data.dao.entity.user" targetProject="../src/main/java" >
+     <property name="enableSubPackages" value="true"/> 
+      <property name="trimStrings" value="true"/>  
+      </javaModelGenerator>
+    	<sqlMapGenerator targetPackage="base.mapper.user"
+			targetProject="../src/main/resources">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+     	<javaClientGenerator type="XMLMAPPER"
+			targetPackage="com.wx.movie.data.dao.mapper.user" targetProject="../src/main/java">
+			<property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+    <table schema="OpenBaseMovie" tableName="open_base_movie" enableCountByExample="false" enableUpdateByExample="false"	enableDeleteByExample="false" enableSelectByExample="false"	selectByExampleQueryId="false">
+    </table>
+    
+     <table schema="User" tableName="t_users" enableCountByExample="false" enableUpdateByExample="false"	enableDeleteByExample="false" enableSelectByExample="true"	selectByExampleQueryId="false">
+    </table>
+    
+     <table schema="UserAttention" tableName="user_attention" enableCountByExample="false" enableUpdateByExample="false"	enableDeleteByExample="false" enableSelectByExample="false"	selectByExampleQueryId="false">
+    </table>
+    
+     <table schema="UserComment" tableName="user_comment" enableCountByExample="false" enableUpdateByExample="false"	enableDeleteByExample="false" enableSelectByExample="false"	selectByExampleQueryId="false">
+    </table>
+      <table schema="UserLike" tableName="user_like" enableCountByExample="false" enableUpdateByExample="false"	enableDeleteByExample="false" enableSelectByExample="false"	selectByExampleQueryId="false">
+    </table>
+  </context>
+</generatorConfiguration>
