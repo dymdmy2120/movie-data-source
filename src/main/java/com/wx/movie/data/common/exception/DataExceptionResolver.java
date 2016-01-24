@@ -12,12 +12,12 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.wx.movie.data.common.util.JsonMapperUtil;
-
+      
 @Component
 public class DataExceptionResolver implements HandlerExceptionResolver {
-
+  
   private final Logger logger = LoggerFactory.getLogger(DataExceptionResolver.class);
-
+    
   @Override
   public ModelAndView resolveException(HttpServletRequest httpServletRequest,
       HttpServletResponse httpServletResponse, Object o, Exception e) {

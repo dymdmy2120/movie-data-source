@@ -40,7 +40,7 @@ import com.wx.movie.data.common.util.JsonMapperUtil;
  * @see
  * @since JDK 1.6
  */
-public class RedisUtils {
+public class RedisUtils {    
 
   private final Logger log = LoggerFactory.getLogger(RedisUtils.class);
 

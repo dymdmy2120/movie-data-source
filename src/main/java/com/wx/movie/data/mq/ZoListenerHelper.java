@@ -19,9 +19,9 @@ public class ZoListenerHelper {
 
   @Autowired
   private ConnectionFactory factory;
-
+  
   @PostConstruct
-  public void init() {
+  public void init() {  
     try {
       logger.info("Asking rabbitMQ to resend unacknowledged messages.");
       Connection connection = factory.createConnection();

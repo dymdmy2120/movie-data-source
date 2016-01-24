@@ -13,7 +13,7 @@ public interface MessageCodes {
    * 系统异常
    */
   public static final String E00003 = "-3";
-  /**
+  /**   
    * 其他异常
    */
   public static final String E00009 = "-8";

@@ -39,6 +39,12 @@
 
 	<rabbit:queue id="USER_ACTION_DATA_QUEUE" name="USER_ACTION_DATA_QUEUE" durable="true" auto-delete="false" />
 	
+		<rabbit:fanout-exchange id="UserDataProcessEx" name="UserDataProcessEx" durable="true" auto-delete="false">  
+		<rabbit:bindings>  
+			<rabbit:binding queue="USER_ACTION_DATA_QUEUE" />
+		</rabbit:bindings>  
+    </rabbit:fanout-exchange>
+	
 	<!--
 	当直接使用convertAndSend(String routingKey,Object message)方法
 	convertAndSend(USER_ACTION_DATA_QUEUE,message)，发送到默认的队列(USER_ACTION_DATA_QUEUE) 
@@ -68,7 +74,7 @@
 	<bean id="testActionQDataLister" class="com.wx.movie.data.mq.TestActionDataQLister" />
 
 	<rabbit:listener-container connection-factory="connectionFactory" message-converter="jsonMessageConverter" 
-		concurrency="5" max-concurrency="10" acknowledge="manual">
+		concurrency="6" max-concurrency="10" acknowledge="manual">
 	  <rabbit:listener ref="testActionQDataLister" method="onMessage" queue-names="USER_ACTION_DATA_QUEUE" />
 	</rabbit:listener-container>
 

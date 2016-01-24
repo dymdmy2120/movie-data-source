@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
 
-  <bean id="propertyConfigurer"
-      class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="fileEncoding" value="utf8"/>
-    <property name="locations">
-      <list>
-        <value>classpath*:config.properties</value>
-      </list>
-    </property>
-  </bean>
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="fileEncoding" value="utf8" />
+		<property name="locations">
+			<list>
+				<value>classpath*:mysql.properties</value>
+				<value>classpath*:rabbit.properties</value>
+				<value>classpath*:redis.properties</value>
+				<value>classpath*:web-config.properties</value>
+			</list>
+		</property>
+	</bean>
 </beans>
