@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds">
 	<!-- 日志存放的路径  -->
-	<property name="LOG_HOME" value="${catalina.home}/dym/logs" />
+	<property name="LOG_HOME" value="/home/dynamo/data/logs" />
     <!-- 控制台输出日志 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>

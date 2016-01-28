@@ -20,5 +20,6 @@
         http://www.springframework.org/schema/task/spring-task-4.1.xsd">
 
   <task:annotation-driven />
-  <task:executor id="pullMovieDataExecutor" pool-size="3-30" queue-capacity="500"/>
+  <task:executor id="pullDataToCacheExecutor" pool-size="3-30" queue-capacity="500"/>
+  <task:executor id="pullDataToQueueExecutor" pool-size="3-30" queue-capacity="500"/>
 </beans>
