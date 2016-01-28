@@ -8,10 +8,12 @@ package com.wx.movie.data.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.wx.movie.data.service.CommonService;
 /**
  * 
@@ -30,13 +32,13 @@ public class CommonServiceImpl implements CommonService {
    * @param movieId
    */
   @Override
-  public void groupByUid(Map<String, List<String>> actionMap, String uid, String movieNo) {
+  public void groupByUid(Map<String, Set<String>> actionMap, String uid, String movieNo) {
     if (actionMap.containsKey(uid)) {// 如果actionMap中包扩了uid这个key
-      List<String> movieIds = actionMap.get(uid);
+      Set<String> movieIds = actionMap.get(uid);
       movieIds.add(movieNo);
       actionMap.put(uid, movieIds);
     } else {
-      List<String> movieNos = Lists.newArrayList();
+      Set<String> movieNos = Sets.newHashSet();
       movieNos.add(movieNo);
       actionMap.put(uid, movieNos);
     }

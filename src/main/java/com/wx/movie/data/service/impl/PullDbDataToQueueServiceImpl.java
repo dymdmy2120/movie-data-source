@@ -6,16 +6,22 @@
 
 package com.wx.movie.data.service.impl;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -36,7 +42,7 @@ import com.wx.movie.data.service.PullDbDataToQueueService;
  * @author dynamo
  */
 @Service
-public class PullDbDataToQueueServiceImpl implements PullDbDataToQueueService {
+public class PullDbDataToQueueServiceImpl implements PullDbDataToQueueService,InitializingBean {
   
 @Autowired
 private UserAttentionMapper userAttentionMapper;
@@ -47,6 +53,9 @@ private UserCommentMapper userCommentMapper;
 @Autowired
 private CommonService commonService;
 
+@Value("${user.action.time}")
+private String pullActionTime;
+
 @Autowired
 @Qualifier("pullDataToQueueExecutor")
 private ThreadPoolTaskExecutor pullDataToQueueExecutor;
@@ -55,6 +64,7 @@ private ThreadPoolTaskExecutor pullDataToQueueExecutor;
 @Qualifier("jsonRabbitTemplate")
  private AmqpTemplate amqpTemplate;
 
+private Date criteriaTime;
 private Logger logger = LoggerFactory.getLogger(PullDbDataToQueueService.class);
 
 /**
@@ -79,13 +89,13 @@ pullDataToQueueExecutor.execute(new Thread(){
   @Override
   public void run() {
     Stopwatch timer = Stopwatch.createStarted();
-    List<UserAttention> usreAttentions = userAttentionMapper.selectByOperateTime(Calendar.getInstance().getTime());
+    List<UserAttention> usreAttentions = userAttentionMapper.selectByOperateTime(criteriaTime);
     if(CollectionUtils.isEmpty(usreAttentions)){
       logger.warn("pullUserAttentionToQueue UserAttention is null");
       return;
     }
     UserActionData userAction = new UserActionData();
-    Map<String,List<String>> actionMap = Maps.newHashMap();
+    Map<String,Set<String>> actionMap = Maps.newHashMap();
     
     for(UserAttention userAttention : usreAttentions){
       commonService.groupByUid(actionMap, String.valueOf(userAttention.getUid()), userAttention.getMovieNo());
@@ -107,13 +117,13 @@ pullDataToQueueExecutor.execute(new Thread(){
  @Override
  public void run() {
    Stopwatch timer = Stopwatch.createStarted();
-   List<UserComment> usreComments = userCommentMapper.selectByOperateTime(Calendar.getInstance().getTime());
+   List<UserComment> usreComments = userCommentMapper.selectByOperateTime(criteriaTime);
    if(CollectionUtils.isEmpty(usreComments)){
      logger.warn("pullUserCommentToQueue UserComment is null");
      return;
    }
    UserActionData userAction = new UserActionData();
-   Map<String,List<String>> actionMap = Maps.newHashMap();
+   Map<String,Set<String>> actionMap = Maps.newHashMap();
    
    for(UserComment userComment : usreComments){
      commonService.groupByUid(actionMap, String.valueOf(userComment.getUid()), userComment.getMovieNo());
@@ -125,6 +135,17 @@ pullDataToQueueExecutor.execute(new Thread(){
    logger.info("pullUserAttentionToQueue take time:{}",timer.stop());
  }
 });
+}
+
+@Override
+public void afterPropertiesSet() throws Exception {
+  DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+  try{
+  criteriaTime = format.parse(pullActionTime);
+  }catch(Exception e){
+    logger.error("parse time fail, source is {}",pullActionTime,e);
+    throw e;
+  }
 }
 
 

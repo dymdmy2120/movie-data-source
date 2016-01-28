@@ -1,7 +1,7 @@
 package com.wx.movie.data.pojo;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 用户行为数据(关于用户浏览影片，搜索影片，关注，评论等行为)
@@ -15,7 +15,7 @@ private String action;
 /**
  * 所有用户行为的map
  */
-private  Map<String,List<String>> userActionMap;
+private  Map<String,Set<String>> userActionMap;
 
 public String getAction() {
   return action;
@@ -23,10 +23,10 @@ public String getAction() {
 public void setAction(String action) {
   this.action = action;
 }
-public Map<String, List<String>> getUserActionMap() {
+public Map<String, Set<String>> getUserActionMap() {
   return userActionMap;
 }
-public void setUserActionMap(Map<String, List<String>> userActionMap) {
+public void setUserActionMap(Map<String, Set<String>> userActionMap) {
   this.userActionMap = userActionMap;
 }
 

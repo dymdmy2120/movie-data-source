@@ -6,7 +6,7 @@
  *
 */
 
-package com.movie.rec.test.service;
+package com.movie.data.source.test;
 
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
