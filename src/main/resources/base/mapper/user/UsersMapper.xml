@@ -21,14 +21,12 @@
 	<select id="selectAllUser" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from t_users
+		from t_users where isDel = 0
 	</select>
 	<!-- 根据uid范围查询用户 -->
-	<select id="selectGreaterThanUid" parameterType="java.lang.Integer"
-		resultMap="BaseResultMap">
+	<select id="selectGreaterThanUid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from t_users where uid > #{uid,jdbcType=INTEGER}}
+		from t_users where uid > #{uid,jdbcType=INTEGER} and isDel = 0
 	</select>
-  
 </mapper>

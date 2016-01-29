@@ -12,5 +12,5 @@ public interface UsersMapper {
    *查询出比uid还要大的用户
    */
   public List<Users> selectGreaterThanUid(Integer uid);
-
+   
 }

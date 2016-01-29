@@ -12,11 +12,10 @@ public interface UserLikeMapper {
   /**
    * 查询出用户喜欢的影片列表
    */
-  /*public List<UserLike> selectByUid(Integer uid);*/
+  public List<UserLike> selectAll();
 
   /**
    * 查询出用户uid加入喜欢影片操作时间之后的记录
    */
-  public List<UserLike> selectByUidAdOperTime(@Param("uid") Integer uid,
-      @Param("operateTime") Date operateTime);
+  public List<UserLike> selectByOperTime(@Param("operateTime") Date operateTime);
 }

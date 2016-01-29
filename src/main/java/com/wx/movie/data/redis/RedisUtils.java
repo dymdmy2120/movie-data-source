@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisShardInfo;
@@ -48,7 +49,7 @@ public class RedisUtils {
    * DEFALT_EXPIRE_TIME:默认过期时间  10days.
    */
   private static final int DEFALT_EXPIRE_TIME = 24 * 60 * 60 * 10;
-
+  
   private ShardedJedisPool shardedJedisPool;
 
   /**

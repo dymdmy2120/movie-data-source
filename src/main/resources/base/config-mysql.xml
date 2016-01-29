@@ -38,7 +38,7 @@
     <property name="password" value="${userdata.mysql.password}"/>
     <!-- 配置初始化大小、最小、最大 --> 
     <property name="initialSize" value="${userdata.initialSize}"/>
-    <property name="maxIdle" value="${userdata.maxIdle}"/>
+    <property name="minIdle" value="${userdata.minIdle}"/>
     <property name="maxActive" value="${userdata.maxActive}"/>
     <!-- 配置获取连接等待超时的时间 -->
     <property name="maxWait" value="60000"/>
@@ -85,7 +85,7 @@
     <!-- 配置初始化大小、最小、最大 -->
       <!-- 配置初始化大小、最小、最大 -->
     <property name="initialSize" value="${order.initialSize}"/>
-    <property name="maxIdle" value="${order.maxIdle}"/>
+    <property name="minIdle" value="${order.minIdle}"/>
     <property name="maxActive" value="${order.maxActive}"/>
     <!-- 配置获取连接等待超时的时间 -->
     <property name="maxWait" value="60000"/>

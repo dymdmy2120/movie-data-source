@@ -132,7 +132,7 @@ pullDataToQueueExecutor.execute(new Thread(){
    userAction.setUserActionMap(actionMap);
    //发送到消息队列中
    amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_DATA_QUEUE.name(), userAction);
-   logger.info("pullUserAttentionToQueue take time:{}",timer.stop());
+   logger.info("pullUserCommentToQueue take time:{}",timer.stop());
  }
 });
 }

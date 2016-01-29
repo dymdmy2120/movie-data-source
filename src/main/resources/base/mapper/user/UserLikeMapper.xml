@@ -11,16 +11,20 @@
   <sql id="Base_Column_List">
     id, u_id, movie_no, operate_time
   </sql>
+  <!-- 查询所有的用户喜欢列表 -->
+    <select id="selectAll"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_like   <!--order by operate_time  -->
+
+  </select>
+  
   <!-- 查询出用户uid喜欢影片的列表
   其中需要以operate_tine升序排序，目的为了下次从数据库查询时只查比最后一次插入记录时间还要后的数据 -->
-  <select id="selectByUidAdOperTime"  resultMap="BaseResultMap">
+  <select id="selectByOperTime"  resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from user_like
-    where u_id = #{uid,jdbcType=INTEGER}
-    <if test="operateTime != null" >
-     AND  operate_time > #{operateTime,jdbcType=TIMESTAMP}
-    </if>
-order by operate_time
+    where  operate_time > #{operateTime,jdbcType=TIMESTAMP}    <!--order by operate_time  -->
   </select>
 </mapper>
