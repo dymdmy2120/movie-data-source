@@ -44,7 +44,7 @@ import com.wx.movie.data.dao.mapper.user.UsersMapper;
  */
 public class WritingUserActionLog extends BaseTest implements InitializingBean {
 
-  @Value("${logRootPath}")
+  @Value("${user.log.logRootPath}")
   private String logRootPath;
 
   @Value("${user.action.json}")
@@ -65,7 +65,7 @@ public class WritingUserActionLog extends BaseTest implements InitializingBean {
 
   private String[] userActions;
 
-  private int logCount = 500;// 产生日志的记录数
+  private int logCount = 2500;// 产生日志的记录数
 
   private List<Users> usersList;
   private List<OpenBaseMovie> moviesList;
@@ -148,6 +148,7 @@ public class WritingUserActionLog extends BaseTest implements InitializingBean {
       }
       logger.info("write data to Log File Path : {} , take time:{}", logPath, timer.stop());
     } catch (Exception e) {
+      e.printStackTrace();
       logger.error("write data to log file error path:{}", logPath, e);
     } finally {
       if (os != null) try {

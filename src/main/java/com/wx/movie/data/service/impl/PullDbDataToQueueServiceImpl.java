@@ -8,7 +8,6 @@ package com.wx.movie.data.service.impl;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +26,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wx.movie.data.common.enums.RabbitMqName;
 import com.wx.movie.data.common.enums.UserOperate;
@@ -94,16 +94,17 @@ pullDataToQueueExecutor.execute(new Thread(){
       logger.warn("pullUserAttentionToQueue UserAttention is null");
       return;
     }
-    UserActionData userAction = new UserActionData();
-    Map<String,Set<String>> actionMap = Maps.newHashMap();
+    Map<String, Set<String>> bseMovieActionMap = Maps.newHashMap();// 基于影片特征向量映射
+    Map<String, Set<String>> bseUsrActionMap = Maps.newHashMap();// 基于用户特征向量映射
     
     for(UserAttention userAttention : usreAttentions){
-      commonService.groupByUid(actionMap, String.valueOf(userAttention.getUid()), userAttention.getMovieNo());
+      commonService.groupByUid(bseMovieActionMap, String.valueOf(userAttention.getUid()), userAttention.getMovieNo());
+      commonService.groupByMovieNo(bseUsrActionMap, String.valueOf(userAttention.getUid()), userAttention.getMovieNo());
     }
-    userAction.setAction(UserOperate.ATTENTION_MOVIE);
-    userAction.setUserActionMap(actionMap);
+    List<UserActionData> userActionDatas = packUserActionData(UserOperate.ATTENTION_MOVIE,bseMovieActionMap,bseUsrActionMap);
+    
     //发送到消息队列中
-    amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_DATA_QUEUE.name(), userAction);
+    amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_DATA_QUEUE.name(), userActionDatas);
     logger.info("pullUserAttentionToQueue take time:{}",timer.stop());
   }
 });
@@ -122,16 +123,16 @@ pullDataToQueueExecutor.execute(new Thread(){
      logger.warn("pullUserCommentToQueue UserComment is null");
      return;
    }
-   UserActionData userAction = new UserActionData();
-   Map<String,Set<String>> actionMap = Maps.newHashMap();
+   Map<String,Set<String>> bseMovieActionMap = Maps.newHashMap();
+   Map<String,Set<String>> bseUsrActionMap = Maps.newHashMap();
    
    for(UserComment userComment : usreComments){
-     commonService.groupByUid(actionMap, String.valueOf(userComment.getUid()), userComment.getMovieNo());
+     commonService.groupByUid(bseMovieActionMap, String.valueOf(userComment.getUid()), userComment.getMovieNo());
+     commonService.groupByMovieNo(bseUsrActionMap, String.valueOf(userComment.getUid()), userComment.getMovieNo());
    }
-   userAction.setAction(UserOperate.COMMENT_MOVIE);
-   userAction.setUserActionMap(actionMap);
+   List<UserActionData> userActionDatas = packUserActionData(UserOperate.COMMENT_MOVIE,bseMovieActionMap,bseUsrActionMap);
    //发送到消息队列中
-   amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_DATA_QUEUE.name(), userAction);
+   amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_DATA_QUEUE.name(), userActionDatas);
    logger.info("pullUserCommentToQueue take time:{}",timer.stop());
  }
 });
@@ -148,5 +149,15 @@ public void afterPropertiesSet() throws Exception {
   }
 }
 
-
+private List<UserActionData> packUserActionData(String action,Map<String, Set<String>> ... actionMaps) {
+  List<UserActionData> userActionDatas = Lists.newArrayList();
+  
+  for(Map<String, Set<String>> actionMap : actionMaps ){
+  UserActionData bseMovieAction = new UserActionData();
+  bseMovieAction.setAction(action);
+  bseMovieAction.setUserActionMap(actionMap);
+  userActionDatas.add(bseMovieAction);
+  }
+  return userActionDatas;
+}
 }

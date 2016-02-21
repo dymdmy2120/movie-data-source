@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds">
 	<!-- 日志存放的路径  -->
-	<property name="LOG_HOME" value="/home/dynamo/data/logs" />
+	<property name="LOG_HOME" value="/home/dynamo/data/logs/movie-data" />
     <!-- 控制台输出日志 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -17,7 +17,7 @@
             <OnMatch>ACCEPT</OnMatch>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/movie-data-source/moviedata_debug.%d{yyyyMMdd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/movie_data_debug.%d{yyyyMMdd}.log</fileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}:%line - %msg%n</pattern>
@@ -30,7 +30,7 @@
             <level>INFO</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/movie-data-source/moviedata_info.%d{yyyyMMdd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/movie_data_info.%d{yyyyMMdd}.log</fileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}:%line - %msg%n</pattern>
@@ -43,7 +43,7 @@
             <level>WARN</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-           	<fileNamePattern>${LOG_HOME}/movie-data-source/moviedata_error.%d{yyyyMMdd}.log</fileNamePattern>
+           	<fileNamePattern>${LOG_HOME}/movie_data_error.%d{yyyyMMdd}.log</fileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}:%line - %msg%n</pattern>
@@ -55,7 +55,7 @@
             <level>INFO</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/movie-data-source/moviedata_analysis.%d{yyyyMMdd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/movie_data_analysis.%d{yyyyMMdd}.log</fileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>

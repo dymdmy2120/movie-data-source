@@ -11,12 +11,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -29,6 +28,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wx.movie.data.common.enums.RabbitMqName;
 import com.wx.movie.data.common.util.JsonMapperUtil;
@@ -50,7 +50,7 @@ public class PullLogDataToQueueServiceImpl implements PullLogDataToQueueService,
 
   @Value("${user.action.time}")
   private String parseLogTime;
-  
+
   @Autowired
   private CommonService commonService;
 
@@ -72,21 +72,25 @@ public class PullLogDataToQueueServiceImpl implements PullLogDataToQueueService,
       logger.warn("UserAction Json File Is Not Found or Empty File");
       return;
     }
-    final UserActionData userAction = new UserActionData();
-
     for (final String action : userActions) {
-      final Map<String, Set<String>> actionMap = parseUserLog(action);
-      if (actionMap == null) {
-        continue;
-      }
       // 异步将用户行为操作发送到消息队列中
       pullDataToQueueExecutor.execute(new Runnable() {
         @Override
         public void run() {
-          userAction.setAction(action);
-          userAction.setUserActionMap(actionMap);
+          List<Map<String, Set<String>>> actionMaps = parseUserLog(action);
+          List<UserActionData> userActionDatas = Lists.newArrayList();
+
+          if (CollectionUtils.isEmpty(actionMaps)) {
+            return;
+          }
+          for (Map<String, Set<String>> actionMap : actionMaps) {
+            UserActionData userAction = new UserActionData();
+            userAction.setAction(action);
+            userAction.setUserActionMap(actionMap);
+            userActionDatas.add(userAction);
+          }
           // 发送到队列中
-          amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_DATA_QUEUE.name(), userAction);
+          amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_DATA_QUEUE.name(), userActionDatas);
         }
       });
     }
@@ -97,7 +101,7 @@ public class PullLogDataToQueueServiceImpl implements PullLogDataToQueueService,
    * 
    * @paran action 用户行为，搜索或者浏览等操作
    */
-  private Map<String, Set<String>> parseUserLog(String action) {
+  private List<Map<String, Set<String>>> parseUserLog(String action) {
     Stopwatch timer = Stopwatch.createStarted();
     String logPath = construtLogPath(action);
     BufferedReader br = null;
@@ -108,7 +112,9 @@ public class PullLogDataToQueueServiceImpl implements PullLogDataToQueueService,
         logger.error("User Operate Log Path is Not Found path:{}", logPath);
         return null;
       }
-      Map<String, Set<String>> actionMap = Maps.newHashMap();
+      List<Map<String, Set<String>>> lists = Lists.newArrayList();
+      Map<String, Set<String>> bseMovieActionMap = Maps.newHashMap();// 基于影片特征向量映射
+      Map<String, Set<String>> bseUsrActionMap = Maps.newHashMap();// 基于用户特征向量映射
       br = new BufferedReader(new FileReader(file));
       String line = null;
 
@@ -116,10 +122,21 @@ public class PullLogDataToQueueServiceImpl implements PullLogDataToQueueService,
         // TODO 考虑日志内容 日志内容格式为{}json格式，每次读取一行然后转换成Map对象，是否耗时？
         @SuppressWarnings("unchecked")
         Map<String, String> userLogMap = JsonMapperUtil.getInstance().fromJson(line, Map.class);
-        commonService.groupByUid(actionMap, userLogMap.get("uid"), userLogMap.get("movieNo"));
+        commonService.groupByUid(bseMovieActionMap, userLogMap.get("uid"),
+            userLogMap.get("movieNo"));
+        commonService.groupByMovieNo(bseUsrActionMap, userLogMap.get("uid"),
+            userLogMap.get("movieNo"));
       }
+      lists.add(bseUsrActionMap);
+      lists.add(bseMovieActionMap);
+
       logger.info("parseUserLog logPath is :{} , take time:{}", logPath, timer.stop());
-      return actionMap;
+      logger.debug("commonService.groupByUid BaseMovieActionMap is {}", JsonMapperUtil
+          .getInstance().toJson(bseMovieActionMap));
+      logger.debug("commonService.groupByMovieNo BaseUserActionMap is {}", JsonMapperUtil
+          .getInstance().toJson(bseUsrActionMap));
+
+      return lists;
     } catch (Exception e) {
       logger.error("parseUserLog erro logPath is :{}", logPath, e);
     } finally {
@@ -136,9 +153,9 @@ public class PullLogDataToQueueServiceImpl implements PullLogDataToQueueService,
    * 构建用户操作日志路径 时间_操作名
    */
   private String construtLogPath(String action) {
-    //DateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
-    //String currentDate = fomat.format(Calendar.getInstance().getTime());
-    //解析什么时间的日志可以在文件中配置
+    // DateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
+    // String currentDate = fomat.format(Calendar.getInstance().getTime());
+    // 解析什么时间的日志可以在文件中配置
     StringBuilder builder = new StringBuilder();
     return builder.append(logRootPath).append(parseLogTime).append("_" + action).toString();
   }

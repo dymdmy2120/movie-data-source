@@ -43,4 +43,24 @@ public class CommonServiceImpl implements CommonService {
       actionMap.put(uid, movieNos);
     }
   }
+  
+  /**
+   * 对用户行为操作集合进行分组，拆分成Map<Integer,List<String>> key：moiveNo value:用户id的集合
+   * 
+   * @author dynamo
+   * @param uid
+   * @param movieId
+   */
+  @Override
+  public void groupByMovieNo(Map<String, Set<String>> actionMap, String uid, String movieNo) {
+    if (actionMap.containsKey(movieNo)) {// 如果actionMap中包扩了movieNo这个key
+      Set<String> uIds = actionMap.get(movieNo);
+      uIds.add(uid);
+      actionMap.put(movieNo, uIds);
+    } else {
+      Set<String> uIds = Sets.newHashSet();
+      uIds.add(uid);
+      actionMap.put(movieNo, uIds);
+    }
+  }
 }

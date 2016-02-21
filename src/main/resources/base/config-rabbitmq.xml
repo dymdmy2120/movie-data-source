@@ -70,10 +70,5 @@
 	    </rabbit:bindings>
 	</rabbit:topic-exchange> -->
 
-	<bean id="testActionQDataLister" class="com.wx.movie.data.mq.TestActionDataQLister" />
-	<rabbit:listener-container connection-factory="connectionFactory" message-converter="jsonMessageConverter" 
-		concurrency="6" max-concurrency="10" acknowledge="manual">
-	  <rabbit:listener ref="testActionQDataLister" method="onMessage" queue-names="USER_ACTION_DATA_QUEUE" />
-	</rabbit:listener-container>
 
 </beans>

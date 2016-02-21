@@ -76,7 +76,8 @@ public class PullDataToCacheServiceImpl implements PullDataToCacheService {
    * 从数据库中查询出所有用户列表 TODO:1、先从缓存中查，若不存在 则查询所有用户，2、若存在获得用户集合中最后一个User的uid(保证用户表是以uid排序)
    * 然后作为条件，查询出大于uid的用户，最后存放到缓存中
    */
-  private List<Users> pullUsersToCache() {
+  @Async("pullDataToCacheExecutor")
+  public List<Users> pullUsersToCache() {
     Stopwatch timer = Stopwatch.createStarted();
     List<Users> retUsers = null;
     List<Users> userFromCache = redisUtils.getList(Users.class, RedisKey.USERLIST);
@@ -84,6 +85,10 @@ public class PullDataToCacheServiceImpl implements PullDataToCacheService {
     if (userFromCache != null) {// 如果缓存中存在用户列表
       Integer lastUid = userFromCache.get(userFromCache.size() - 1).getUid();
       List<Users> partUsers = usersMapper.selectGreaterThanUid(lastUid);
+      
+      if(CollectionUtils.isEmpty(partUsers)){//如果数据库中没有最新的记录，则直接返回
+        return userFromCache;
+      }
       userFromCache.addAll(partUsers);
       retUsers = userFromCache;
     } else {
@@ -93,6 +98,8 @@ public class PullDataToCacheServiceImpl implements PullDataToCacheService {
       logger.warn("pollUsersToCache but get user list is null ");
       return null;
     }
+    logger.info("haha==="+userFromCache.get(userFromCache.size()-1));
+    logger.info("hehe==="+userFromCache.get(retUsers.size()-1));
     // 存入缓存
     redisUtils.setList(RedisKey.USERLIST, retUsers);
 
@@ -105,7 +112,8 @@ public class PullDataToCacheServiceImpl implements PullDataToCacheService {
   /**
    * 获取影片数据列表
    */
-  private List<OpenBaseMovie> pullMovieToCache() {
+  @Async("pullDataToCacheExecutor")
+  public List<OpenBaseMovie> pullMovieToCache() {
     Stopwatch timer = Stopwatch.createStarted();
     List<OpenBaseMovie> retMovies = null;
     List<OpenBaseMovie> movieFromCache =
@@ -114,6 +122,10 @@ public class PullDataToCacheServiceImpl implements PullDataToCacheService {
     if (movieFromCache != null) {// 如果缓存中存影片列表
       Integer lastMid = movieFromCache.get(movieFromCache.size() - 1).getId();
       List<OpenBaseMovie> partMovies = openBaseMovieMapper.selectGreaterThanId(lastMid);
+      
+      if(CollectionUtils.isEmpty(partMovies)){//如果数据库中没有最新的记录，则直接返回
+        return movieFromCache;
+      }
       movieFromCache.addAll(partMovies);
       retMovies = movieFromCache;
     } else {
@@ -139,15 +151,18 @@ public class PullDataToCacheServiceImpl implements PullDataToCacheService {
    * @param userList 用户列表，直接使用内存中的用户列表
    * 
    */
-  private Map<String, Set<String>> pullUserLikeToCache() {
+  @Async("pullDataToCacheExecutor")
+  public Map<String, Set<String>> pullUserLikeToCache() {
     Stopwatch timer = Stopwatch.createStarted();
+    //获取用户喜欢影片列表
     List<UserLike> userLikeList = getUserLike();
     if (userLikeList == null) {
       logger.warn("pullUserLikeToCache but get usreLike list is null ");
       return null;
     }
     /**
-     * 1、通过groupByUid 获得 用户喜欢影片 的映射，key :用户id value:喜欢影片的集合 2、遍历Map集合，设入到缓存中
+     * 1、通过groupByUid 获得 用户喜欢影片 的映射，key :用户id value:喜欢影片的集合 
+     * 2、遍历Map集合，设入到缓存中
      */
     Map<String, Set<String>> userLikeMap = Maps.newHashMap();
 
@@ -180,6 +195,11 @@ public class PullDataToCacheServiceImpl implements PullDataToCacheService {
     if (userLikeFromCache != null) {// 用户喜欢影片列表存在缓存中
       UserLike lastUserLike = userLikeFromCache.get(userLikeFromCache.size() - 1);
       List<UserLike> partUserLike = userLikeMapper.selectByOperTime(lastUserLike.getOperateTime());
+      
+      if(CollectionUtils.isEmpty(partUserLike)){//如果数据库中没有最新的记录，则直接返回
+        return partUserLike;
+      }
+      
       userLikeFromCache.addAll(partUserLike);
       retUserLike = userLikeFromCache;
     } else {
@@ -193,7 +213,7 @@ public class PullDataToCacheServiceImpl implements PullDataToCacheService {
     // 存入到缓存
     redisUtils.setList(RedisKey.USER_LIKE_LIST, retUserLike);
 
-    logger.debug("get user list result :{}", JsonMapperUtil.getInstance().toJson(retUserLike));
+    logger.debug("get user like list result :{}", JsonMapperUtil.getInstance().toJson(retUserLike));
     logger.info("PullDataToCacheServiceImpl.getUserLike query userlike list take time：{}",
         timer.stop());
     return retUserLike;

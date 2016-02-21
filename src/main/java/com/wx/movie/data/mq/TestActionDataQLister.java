@@ -26,7 +26,7 @@ public class TestActionDataQLister implements ChannelAwareMessageListener {
  /*     UserActionData userAction = JsonMapperUtil.getInstance().fromJson(message.getBody(), UserActionData.class);
       logger.info("Rec User Action Data :{}", JsonMapperUtil.getInstance().toJson(userAction));*/
       String userAction = new String(message.getBody(),"UTF-8");
-      logger.info("Rec User Action Data :{}",userAction);
+      logger.debug("Rec User Action Data :{}",userAction);
     } catch (Throwable e) {
       logger.error("TestActionDataQLister process message failed.", e);
     } finally {
