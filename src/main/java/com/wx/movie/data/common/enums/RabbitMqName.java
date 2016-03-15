@@ -12,5 +12,5 @@ package com.wx.movie.data.common.enums;
  * @author   dynamo
  */
 public enum RabbitMqName {
-  USER_ACTION_DATA_QUEUE 
-} 
+  USER_ACTION_BSEUSR_QUEUE, USER_ACTION_BSEMOVIE_QUEUE
+}

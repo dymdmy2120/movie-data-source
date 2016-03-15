@@ -17,6 +17,11 @@ private String action;
  */
 private  Map<String,Set<String>> userActionMap;
 
+  public UserActionData(String action, Map<String, Set<String>> userActionMap) {
+    super();
+    this.action = action;
+    this.userActionMap = userActionMap;
+  }
 public String getAction() {
   return action;
 }
@@ -29,5 +34,10 @@ public Map<String, Set<String>> getUserActionMap() {
 public void setUserActionMap(Map<String, Set<String>> userActionMap) {
   this.userActionMap = userActionMap;
 }
+
+  @Override
+  public String toString() {
+    return "UserActionData [action=" + action + ", userActionMap=" + userActionMap + "]";
+  }
 
 }

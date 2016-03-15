@@ -77,20 +77,21 @@ public class PullLogDataToQueueServiceImpl implements PullLogDataToQueueService,
       pullDataToQueueExecutor.execute(new Runnable() {
         @Override
         public void run() {
+          Stopwatch timer = Stopwatch.createStarted();
           List<Map<String, Set<String>>> actionMaps = parseUserLog(action);
-          List<UserActionData> userActionDatas = Lists.newArrayList();
 
           if (CollectionUtils.isEmpty(actionMaps)) {
             return;
           }
-          for (Map<String, Set<String>> actionMap : actionMaps) {
-            UserActionData userAction = new UserActionData();
-            userAction.setAction(action);
-            userAction.setUserActionMap(actionMap);
-            userActionDatas.add(userAction);
-          }
-          // 发送到队列中
-          amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_DATA_QUEUE.name(), userActionDatas);
+          // 发送到消息到基于用户推荐的队列中
+          UserActionData bseUserAction = new UserActionData(action, actionMaps.get(0));
+          amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_BSEUSR_QUEUE.name(), bseUserAction);
+
+          // 发送到消息到基于影片推荐的队列中
+          UserActionData bseMovieAction = new UserActionData(action, actionMaps.get(1));
+          amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_BSEMOVIE_QUEUE.name(),
+              bseMovieAction);
+          logger.info("pullLogDataToQueue action is {} , take time is {}", action, timer.stop());
         }
       });
     }
@@ -98,7 +99,7 @@ public class PullLogDataToQueueServiceImpl implements PullLogDataToQueueService,
 
   /**
    * 解析日志文件成特定的数据结构，Map<String,List<String>>
-   * 
+   *
    * @paran action 用户行为，搜索或者浏览等操作
    */
   private List<Map<String, Set<String>>> parseUserLog(String action) {
@@ -141,7 +142,9 @@ public class PullLogDataToQueueServiceImpl implements PullLogDataToQueueService,
       logger.error("parseUserLog erro logPath is :{}", logPath, e);
     } finally {
       try {
-        if (br != null) br.close();
+        if (br != null) {
+          br.close();
+        }
       } catch (IOException e) {
         logger.error("parseUserLog close BufferedReader fail ", e);
       }
@@ -183,7 +186,9 @@ public class PullLogDataToQueueServiceImpl implements PullLogDataToQueueService,
     } catch (Exception e) {
       logger.error("parse user_action.json fail", e);
     } finally {
-      if (fis != null) fis.close();
+      if (fis != null) {
+        fis.close();
+      }
     }
   }
 }

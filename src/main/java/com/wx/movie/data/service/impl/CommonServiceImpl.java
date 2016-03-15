@@ -6,13 +6,9 @@
 
 package com.wx.movie.data.service.impl;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.springframework.stereotype.Service;
-
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.wx.movie.data.service.CommonService;
 /**

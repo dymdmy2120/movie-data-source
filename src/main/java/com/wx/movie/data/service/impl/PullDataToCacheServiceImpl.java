@@ -98,8 +98,6 @@ public class PullDataToCacheServiceImpl implements PullDataToCacheService {
       logger.warn("pollUsersToCache but get user list is null ");
       return null;
     }
-    logger.info("haha==="+userFromCache.get(userFromCache.size()-1));
-    logger.info("hehe==="+userFromCache.get(retUsers.size()-1));
     // 存入缓存
     redisUtils.setList(RedisKey.USERLIST, retUsers);
 
@@ -116,8 +114,7 @@ public class PullDataToCacheServiceImpl implements PullDataToCacheService {
   public List<OpenBaseMovie> pullMovieToCache() {
     Stopwatch timer = Stopwatch.createStarted();
     List<OpenBaseMovie> retMovies = null;
-    List<OpenBaseMovie> movieFromCache =
-        redisUtils.getList(OpenBaseMovie.class, RedisKey.MOVIELIST);
+    List<OpenBaseMovie> movieFromCache = redisUtils.getList(OpenBaseMovie.class, RedisKey.MOVIELIST);
 
     if (movieFromCache != null) {// 如果缓存中存影片列表
       Integer lastMid = movieFromCache.get(movieFromCache.size() - 1).getId();

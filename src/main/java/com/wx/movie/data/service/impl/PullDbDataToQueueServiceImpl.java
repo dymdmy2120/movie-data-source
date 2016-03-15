@@ -26,7 +26,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wx.movie.data.common.enums.RabbitMqName;
 import com.wx.movie.data.common.enums.UserOperate;
@@ -43,7 +42,7 @@ import com.wx.movie.data.service.PullDbDataToQueueService;
  */
 @Service
 public class PullDbDataToQueueServiceImpl implements PullDbDataToQueueService,InitializingBean {
-  
+
 @Autowired
 private UserAttentionMapper userAttentionMapper;
 
@@ -76,11 +75,11 @@ private Logger logger = LoggerFactory.getLogger(PullDbDataToQueueService.class);
   public void pullDbDataToQueue() {
     //将用户关注影片放在队列中
     pullUserAttentionToQueue();
-    
+
    //将用户评论影片放在队列中
     pullUserCommentToQueue();
   }
-  
+
   /**
    * 将用户关注影片的数据加入到队列中
    */
@@ -94,22 +93,30 @@ pullDataToQueueExecutor.execute(new Thread(){
       logger.warn("pullUserAttentionToQueue UserAttention is null");
       return;
     }
+        Map<String, Set<String>> bseUsrActionMap = Maps.newHashMap();// 基于用户特征向量映射
     Map<String, Set<String>> bseMovieActionMap = Maps.newHashMap();// 基于影片特征向量映射
-    Map<String, Set<String>> bseUsrActionMap = Maps.newHashMap();// 基于用户特征向量映射
-    
+
     for(UserAttention userAttention : usreAttentions){
-      commonService.groupByUid(bseMovieActionMap, String.valueOf(userAttention.getUid()), userAttention.getMovieNo());
-      commonService.groupByMovieNo(bseUsrActionMap, String.valueOf(userAttention.getUid()), userAttention.getMovieNo());
+          commonService.groupByUid(bseUsrActionMap, String.valueOf(userAttention.getUid()),
+              userAttention.getMovieNo());
+          commonService.groupByMovieNo(bseMovieActionMap, String.valueOf(userAttention.getUid()),
+              userAttention.getMovieNo());
     }
-    List<UserActionData> userActionDatas = packUserActionData(UserOperate.ATTENTION_MOVIE,bseMovieActionMap,bseUsrActionMap);
-    
-    //发送到消息队列中
-    amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_DATA_QUEUE.name(), userActionDatas);
+        // 发送到消息到基于用户推荐的队列中
+    UserActionData bseUserAction = new UserActionData(UserOperate.ATTENTION_MOVIE, bseUsrActionMap);
+        amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_BSEUSR_QUEUE.name(), bseUserAction);
+
+        // 发送到消息到基于影片推荐的队列中
+        UserActionData bseMovieAction =
+            new UserActionData(UserOperate.ATTENTION_MOVIE, bseMovieActionMap);
+        amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_BSEMOVIE_QUEUE.name(),
+          bseMovieAction);
+
     logger.info("pullUserAttentionToQueue take time:{}",timer.stop());
   }
 });
  }
- 
+
  /**
   * 将用户评论的影片的数据加入到队列中
   */
@@ -123,16 +130,25 @@ pullDataToQueueExecutor.execute(new Thread(){
      logger.warn("pullUserCommentToQueue UserComment is null");
      return;
    }
+        Map<String, Set<String>> bseUsrActionMap = Maps.newHashMap();
    Map<String,Set<String>> bseMovieActionMap = Maps.newHashMap();
-   Map<String,Set<String>> bseUsrActionMap = Maps.newHashMap();
-   
+
    for(UserComment userComment : usreComments){
-     commonService.groupByUid(bseMovieActionMap, String.valueOf(userComment.getUid()), userComment.getMovieNo());
-     commonService.groupByMovieNo(bseUsrActionMap, String.valueOf(userComment.getUid()), userComment.getMovieNo());
+          commonService.groupByUid(bseUsrActionMap, String.valueOf(userComment.getUid()),
+              userComment.getMovieNo());
+          commonService.groupByMovieNo(bseMovieActionMap, String.valueOf(userComment.getUid()),
+              userComment.getMovieNo());
    }
-   List<UserActionData> userActionDatas = packUserActionData(UserOperate.COMMENT_MOVIE,bseMovieActionMap,bseUsrActionMap);
-   //发送到消息队列中
-   amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_DATA_QUEUE.name(), userActionDatas);
+        // 发送到消息到基于用户推荐的队列中
+        UserActionData bseUserAction =
+            new UserActionData(UserOperate.COMMENT_MOVIE, bseUsrActionMap);
+        amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_BSEUSR_QUEUE.name(), bseUserAction);
+
+        // 发送到消息到基于影片推荐的队列中
+        UserActionData bseMovieAction =
+            new UserActionData(UserOperate.COMMENT_MOVIE, bseMovieActionMap);
+        amqpTemplate.convertAndSend(RabbitMqName.USER_ACTION_BSEMOVIE_QUEUE.name(), bseMovieAction);
+
    logger.info("pullUserCommentToQueue take time:{}",timer.stop());
  }
 });
@@ -149,15 +165,12 @@ public void afterPropertiesSet() throws Exception {
   }
 }
 
-private List<UserActionData> packUserActionData(String action,Map<String, Set<String>> ... actionMaps) {
-  List<UserActionData> userActionDatas = Lists.newArrayList();
-  
-  for(Map<String, Set<String>> actionMap : actionMaps ){
-  UserActionData bseMovieAction = new UserActionData();
-  bseMovieAction.setAction(action);
-  bseMovieAction.setUserActionMap(actionMap);
-  userActionDatas.add(bseMovieAction);
-  }
-  return userActionDatas;
-}
+  /*
+   * private List<UserActionData> packUserActionData(String action,Map<String, Set<String>> ...
+   * actionMaps) { List<UserActionData> userActionDatas = Lists.newArrayList();
+   *
+   * for(Map<String, Set<String>> actionMap : actionMaps ){ UserActionData bseMovieAction = new
+   * UserActionData(); bseMovieAction.setAction(action); bseMovieAction.setUserActionMap(actionMap);
+   * userActionDatas.add(bseMovieAction); } return userActionDatas; }
+   */
 }

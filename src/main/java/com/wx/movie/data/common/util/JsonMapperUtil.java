@@ -89,7 +89,7 @@ public class JsonMapperUtil {
   }
 
   public byte[] toJsonByBytes(Object object) {
-    
+
     try {
       return mapper.writeValueAsBytes(object);
     } catch (IOException e) {
@@ -176,7 +176,6 @@ public class JsonMapperUtil {
       return null;
     }
   }
-
   /**
    * 构造Collection类型.
    */
