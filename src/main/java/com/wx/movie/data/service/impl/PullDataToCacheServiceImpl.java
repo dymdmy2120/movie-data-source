@@ -37,7 +37,7 @@ import com.wx.movie.data.service.PullDataToCacheService;
  */
 @Service
 public class PullDataToCacheServiceImpl implements PullDataToCacheService {
-
+ 
   @Autowired
   private RedisUtils redisUtils;
 
