@@ -13,7 +13,7 @@ public interface OpenBaseMovieMapper {
     /**
      *查询出比id还要大的影片
      */
-    public List<OpenBaseMovie> selectGreaterThanId(Integer id);
+    public List<OpenBaseMovie> selectGreaterThanId(Integer mid);
     
     public OpenBaseMovie selectByMoiveNo(@Param("movieNo") String movieNo);
 }

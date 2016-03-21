@@ -169,7 +169,7 @@ public class PullLogDataToQueueServiceImpl implements PullLogDataToQueueService,
     FileInputStream fis = null;
     try {
       // 得到classpath目录路径
-      String path = this.getClass().getResource("/").toURI().getPath();
+      String path = Thread.currentThread().getContextClassLoader().getResource("/").toURI().getPath();
       path = path + userActionJson;
       logger.info("配置用户操作文件路径：" + path);
       File jsonFile = new File(path);

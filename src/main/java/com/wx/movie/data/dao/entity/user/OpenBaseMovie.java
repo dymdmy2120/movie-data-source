@@ -3,7 +3,8 @@ package com.wx.movie.data.dao.entity.user;
 import java.util.Date;
 
 public class OpenBaseMovie {
-    private Integer id;
+	private Integer mid;
+    private String id;
     private String movieno;
     private String movienamechs;
     private String movienameeng;
@@ -37,16 +38,23 @@ public class OpenBaseMovie {
     private String score;
     private Boolean ispast;
  
-    public Integer getId() {
-      return id;
-    }
+    public Integer getMid() {
+		return mid;
+	}
 
-    public void setId(Integer id) {
-      this.id = id;
-    }
+	public void setMid(Integer mid) {
+		this.mid = mid;
+	}
 
+	public String getId() {
+		return id;
+	}
 
-    public Boolean getIspast() {
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public Boolean getIspast() {
       return ispast;
     }
 

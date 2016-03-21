@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wx.movie.data.dao.mapper.user.OpenBaseMovieMapper">
   <resultMap id="BaseResultMap" type="com.wx.movie.data.dao.entity.user.OpenBaseMovie">
-    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="mid" jdbcType="INTEGER" property="mid" />
+    <id column="id" jdbcType="VARCHAR" property="id" />
      <id column="isPast" jdbcType="BIT" property="ispast" />
     <result column="MovieNo" jdbcType="VARCHAR" property="movieno" />
     <result column="MovieNameChs" jdbcType="VARCHAR" property="movienamechs" />
@@ -32,7 +33,7 @@
     <result column="Score" jdbcType="VARCHAR" property="score" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, MovieNo, MovieNameChs, MovieNameEng, MovieNamePinyin, MovieNameInitPinyin, Director, 
+    mid,id, MovieNo, MovieNameChs, MovieNameEng, MovieNamePinyin, MovieNameInitPinyin, Director, 
     Screenwriter, Starring, MovieType, Contry, FirstShow, Duration, MovieDetail, Version, 
     InShortRemark, IsLock, MovieUrl, SourceType, Type, Status, CreatorID, CreateTime, 
     EditerID, EditTime, MongoCheckCode, Score,isPast
@@ -48,7 +49,7 @@
 		resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from open_base_movie where id > #{id,jdbcType=INTEGER} and isPast = 0
+		from open_base_movie where mid > #{mid,jdbcType=INTEGER} and isPast = 0
 	</select>
 <!-- 根据movieNo查询影片信息 -->
 	<select id="selectByMoiveNo" parameterType="java.lang.String"

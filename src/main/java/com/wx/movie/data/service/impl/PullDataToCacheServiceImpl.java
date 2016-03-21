@@ -117,7 +117,7 @@ public class PullDataToCacheServiceImpl implements PullDataToCacheService {
     List<OpenBaseMovie> movieFromCache = redisUtils.getList(OpenBaseMovie.class, RedisKey.MOVIELIST);
 
     if (movieFromCache != null) {// 如果缓存中存影片列表
-      Integer lastMid = movieFromCache.get(movieFromCache.size() - 1).getId();
+      Integer lastMid = movieFromCache.get(movieFromCache.size() - 1).getMid();
       List<OpenBaseMovie> partMovies = openBaseMovieMapper.selectGreaterThanId(lastMid);
       
       if(CollectionUtils.isEmpty(partMovies)){//如果数据库中没有最新的记录，则直接返回
