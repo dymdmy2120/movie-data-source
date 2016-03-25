@@ -123,9 +123,9 @@ public class PullLogDataToQueueServiceImpl implements PullLogDataToQueueService,
         // TODO 考虑日志内容 日志内容格式为{}json格式，每次读取一行然后转换成Map对象，是否耗时？
         @SuppressWarnings("unchecked")
         Map<String, String> userLogMap = JsonMapperUtil.getInstance().fromJson(line, Map.class);
-        commonService.groupByUid(bseMovieActionMap, userLogMap.get("uid"),
+        commonService.groupByUid(bseUsrActionMap, userLogMap.get("uid"),
             userLogMap.get("movieNo"));
-        commonService.groupByMovieNo(bseUsrActionMap, userLogMap.get("uid"),
+        commonService.groupByMovieNo(bseMovieActionMap, userLogMap.get("uid"),
             userLogMap.get("movieNo"));
       }
       lists.add(bseUsrActionMap);
@@ -169,7 +169,9 @@ public class PullLogDataToQueueServiceImpl implements PullLogDataToQueueService,
     FileInputStream fis = null;
     try {
       // 得到classpath目录路径
-      String path = Thread.currentThread().getContextClassLoader().getResource("/").toURI().getPath();
+      //String path = Thread.currentThread().getContextClassLoader().getResource("/").toURI().getPath();
+    	System.out.println(this.getClass().getClassLoader().getResource(""));
+    	String path = Thread.currentThread().getContextClassLoader().getResource("").toURI().getPath();
       path = path + userActionJson;
       logger.info("配置用户操作文件路径：" + path);
       File jsonFile = new File(path);
